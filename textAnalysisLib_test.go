@@ -35,9 +35,24 @@ func TestRemoveStopWords(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	
+
 	if result != expectedResult {
 		fmt.Println(result)
 		t.Error("RemoveStopWords, unexpected result")
 	}
+}
+
+func TestTokenize(t *testing.T) {
+	language := "pt"
+	testString := "Vamos para o carnaval"
+
+	result := Tokenize(testString, language)
+
+	expectedResult := []string{"vamos", "carnaval"}
+
+	if result[0] != expectedResult[0] || len(result) != len(expectedResult) {
+		fmt.Println(result)
+		t.Error("Tokenize, unexpected result")
+	}
+
 }
