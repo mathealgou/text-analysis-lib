@@ -98,3 +98,39 @@ func Tokenize(text string, language string) []string {
 
 	return tokens
 }
+
+
+// Transforms a string in a list of clean normalized tokens
+//
+//- texts => []string;
+//
+//- language => string; two letter abbreviation ("pt", "en", "es"), following the ISO 639 standard.
+//
+//- threshold => int; the minimum number of occurences of a given token in order to be considered as part of the result.
+func GenerateBOW(texts []string, language string, threshold int) map[string]int {
+
+	bow := make(map[string]int)
+
+	for _, text := range texts {
+		tokens := Tokenize(text, language)
+		for _, token := range tokens {
+			val, ok := bow[token]
+			if !ok {
+				bow[token] = 1
+			} else {
+				bow[token] = val + 1
+			}
+		}
+	}
+
+	// apply the threshold
+	result := make(map[string]int)
+
+	for token, count := range bow {
+		if count > threshold {
+			result[token] = count
+		}
+	}
+
+	return result
+}

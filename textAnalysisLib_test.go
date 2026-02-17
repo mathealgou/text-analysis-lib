@@ -56,3 +56,28 @@ func TestTokenize(t *testing.T) {
 	}
 
 }
+
+
+func TestGenerateBOW(t *testing.T) {
+	language := "pt"
+	testStrings := []string{"Vamos para o carnaval", "Vamos para a festa junina"}
+	threshold := 2
+
+
+	result := GenerateBOW(testStrings, language, threshold)
+
+	expectedResult := map[string]int {
+		"vamos": 2,
+		"festa": 1,
+		"carnaval": 1,
+	}
+
+	for token, count := range result{
+		expectedValue, ok := expectedResult[token]
+		if !ok || expectedValue != count {
+			fmt.Println(result)
+			t.Error("GenerateBOW, unexpected result")
+		}
+	}
+
+}
