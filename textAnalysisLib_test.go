@@ -4,6 +4,7 @@ import (
 	"testing"
 	"fmt"
 )
+
 func TestRemovePunctuation(t *testing.T){
 	testString := "This, is. a string!!! wi;th pun:ctuation{}"
 	result := RemovePunctuation(testString)
@@ -79,5 +80,36 @@ func TestGenerateBOW(t *testing.T) {
 			t.Error("GenerateBOW, unexpected result")
 		}
 	}
+
+}
+
+func TestCalculateTextBowProbability(t *testing.T) {
+	language := "pt"
+	testStrings := []string{
+		"Vamos para o carnaval",
+		"Vamos para a festa junina",
+		"essa festa no carnaval é ótima",
+		"tem que acabar o carnaval",
+		"festa em tal lugar no carnaval, bora?",
+	}
+	
+	threshold := 1
+
+	bow := GenerateBOW(testStrings, language, threshold)
+
+	testText := "vamos ao carnaval"
+
+	testText2 := "gostaria de ir para a biblioteca"
+	
+
+	result := CalculateTextBowProbability(testText, bow, language)
+
+	result2 := CalculateTextBowProbability(testText2, bow, language)
+
+
+	if result < result2 {
+		t.Error("CalculateTextBowProbability, unexpected result.")
+	}
+
 
 }

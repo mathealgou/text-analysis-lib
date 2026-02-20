@@ -1,9 +1,9 @@
 package textAnalysisLib
-
 import (
 	"strings"
 	"os"
 	"fmt"
+	"math"
 )
 
 // Does what it says on the tin.
@@ -12,6 +12,7 @@ func RemovePunctuation(text string) string{
 	result := text
 
 	punctuation, err := ReadListFromFile("./data/punctuation.txt")
+
 	if err != nil{
 		fmt.Println(err)
 		panic(err)
@@ -133,4 +134,34 @@ func GenerateBOW(texts []string, language string, threshold int) map[string]int 
 	}
 
 	return result
+}
+
+
+// Calculates the probability of a given string being found in a bag of words, which can be particularly useful when using a naive Bayes 
+// classifier.
+// 
+//- test => string (the string for which the probability will be calculated)
+// 
+//- bow => map[string]int (the bag of words)
+// 
+//- language => string; two letter abbreviation ("pt", "en", "es"), following the ISO 639 standard.
+func CalculateTextBowProbability(text string, bow map[string]int, language string) float64 {
+	tokens := Tokenize(text, language)
+	probability := 0.0
+	totalCounts := 0
+
+	for _, count := range bow {
+		totalCounts += count
+	}
+
+	
+	denominator := float64(totalCounts + len(bow))
+
+	for _, token := range tokens {
+		count := bow[token]
+		// Laplace smoothing for unseen words.
+		sum := math.Log2(float64(count+1)) - math.Log2(denominator)
+		probability += sum
+	}
+	return probability
 }
