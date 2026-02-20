@@ -145,6 +145,7 @@ func GenerateBOW(texts []string, language string, threshold int) map[string]int 
 //- bow => map[string]int (the bag of words)
 // 
 //- language => string; two letter abbreviation ("pt", "en", "es"), following the ISO 639 standard.
+// 
 func CalculateTextBowProbability(text string, bow map[string]int, language string) float64 {
 	tokens := Tokenize(text, language)
 	probability := 0.0
@@ -164,4 +165,15 @@ func CalculateTextBowProbability(text string, bow map[string]int, language strin
 		probability += sum
 	}
 	return probability
+}
+
+
+// Calculate probability for diferent BOWs
+func CalculateTextProbabilityForBOWs(text string, bows []map[string]int, language string) []float64 {
+	probabilities := []float64{} 
+	for _, bow := range bows {
+		probability := CalculateTextBowProbability(text, bow, language)
+		probabilities =	append(probabilities, probability)
+	}
+	return probabilities
 }

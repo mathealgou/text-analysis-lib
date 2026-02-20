@@ -113,3 +113,39 @@ func TestCalculateTextBowProbability(t *testing.T) {
 
 
 }
+
+func TestCalculateTextProbabilityForBOWs(t *testing.T) {
+	language := "pt"
+	threshold := 1
+	testStrings := []string{
+		"Vamos para o carnaval",
+		"Vamos para a festa junina",
+		"essa festa no carnaval é ótima",
+		"tem que acabar o carnaval",
+		"festa em tal lugar no carnaval, bora?",
+	}
+	testStrings2 := []string{
+		"Vamos para a biblioteca",
+		"Vamos para a aula de matemática",
+		"essa biblioteca é ótima",
+		"tem que acabar as bibliotecas",
+		"aula de tal coisa na biblioteca, bora?",
+	}
+
+	bow1 := GenerateBOW(testStrings, language, threshold)
+
+	bow2 := GenerateBOW(testStrings2, language, threshold)
+
+	bows := []map[string]int {bow1, bow2}
+
+	testText := "Essa é a biblioteca das bibliotecas"
+
+	result := CalculateTextProbabilityForBOWs(testText, bows, language)
+
+	// fmt.Println(result)
+
+	if result[0] > result[1] {
+		t.Error("CalculateTextProbabilityForBOWs, unexpected result")
+	}
+
+}
