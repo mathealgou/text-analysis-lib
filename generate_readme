@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+PACKAGE_NAME="textAnalysisLib";
+FUNCTION_PREFIX="func ";
+FUNCTIONS_TITLE="FUNCTIONS"
+
+# make the package name title 1
+sed1="s/package $PACKAGE_NAME/# package $PACKAGE_NAME/"
+
+# make the FUNCTIONS section a title 2
+sed2="s/$FUNCTIONS_TITLE/## Functions/g"
+
+# make funcs title 3
+sed3="s/$FUNCTION_PREFIX/### $FUNCTION_PREFIX/g"
+
+# fix the title
+sed4="s# // import#\n &#"
+
+go doc -all | sed "$sed1" | sed "$sed2" | sed "$sed3" | sed "$sed4" > README.md

@@ -7,6 +7,10 @@ import (
 )
 
 // Does what it says on the tin.
+// -  text => string
+// 
+// returns string (With punctuation characters removed)
+// 
 func RemovePunctuation(text string) string{
 
 	result := text
@@ -26,6 +30,10 @@ func RemovePunctuation(text string) string{
 
 // Reads a text file and returns a list of its's lines.
 //
+// -  filePath => string (In the same format as would be passed to os.ReadFile, `go doc os.ReadFile` for more information)
+// 
+// returns ([]string, error) (A list of the file's lines)
+// 
 func ReadListFromFile(filePath string) ([]string, error) {
 	contents, err := os.ReadFile(filePath)
 	if err != nil{
@@ -47,6 +55,8 @@ func ReadListFromFile(filePath string) ([]string, error) {
 //
 //- language => two letter abbreviation ("pt", "en", "es"), following the ISO 639 standard.
 //
+// returns (string, error) (A string is returned with the stop words removed, see /data/stopwords for information on which words are skipped in each language)
+// 
 func RemoveStopWords(text string, language string) (string, error) {
 	stopwordsFilePath := fmt.Sprintf("./data/stopwords/%v.txt", language)
 	stopwords, err := ReadListFromFile(stopwordsFilePath)
@@ -78,6 +88,8 @@ func RemoveStopWords(text string, language string) (string, error) {
 //
 //- language => two letter abbreviation ("pt", "en", "es"), following the ISO 639 standard.
 //
+// returns []string (a list of clean, usable tokens, with punctuation and stopwords removed.)
+// 
 func Tokenize(text string, language string) []string {
 	lowercaseText := strings.ToLower(text)
 
@@ -108,6 +120,9 @@ func Tokenize(text string, language string) []string {
 //- language => string; two letter abbreviation ("pt", "en", "es"), following the ISO 639 standard.
 //
 //- threshold => int; the minimum number of occurences of a given token in order to be considered as part of the result.
+// 
+// returns map[string]int (Where the index is the token in question (see the Tokenize() function), and the int is the count of each token in the text.)
+// 
 func GenerateBOW(texts []string, language string, threshold int) map[string]int {
 
 	bow := make(map[string]int)
@@ -146,6 +161,8 @@ func GenerateBOW(texts []string, language string, threshold int) map[string]int 
 // 
 //- language => string; two letter abbreviation ("pt", "en", "es"), following the ISO 639 standard.
 // 
+// returns float64 (The probability of the text in a given bow)
+// 
 func CalculateTextBowProbability(text string, bow map[string]int, language string) float64 {
 	tokens := Tokenize(text, language)
 	probability := 0.0
@@ -170,6 +187,16 @@ func CalculateTextBowProbability(text string, bow map[string]int, language strin
 
 // Calculate probability for diferent BOWs
 // 
+// Particularly useful for comparing the probabilities of a text being a part of separate categories of texts. 
+// 
+//- test => string (the string for which the probability will be calculated)
+// 
+//- bows => []map[string]int (the bags of words)
+// 
+//- language => string; two letter abbreviation ("pt", "en", "es"), following the ISO 639 standard.
+// 
+// returns []float64 (The probabilities of the text for each bag of words given, in the same order.)
+// 
 func CalculateTextProbabilityForBOWs(text string, bows []map[string]int, language string) []float64 {
 	probabilities := []float64{} 
 	for _, bow := range bows {
@@ -179,7 +206,15 @@ func CalculateTextProbabilityForBOWs(text string, bows []map[string]int, languag
 	return probabilities
 }
 
-// Reads and returns the contents of a CSV file, it must contain headers.
+// Reads and returns the contents of a CSV file. 
+// 
+// The file in question must contain headers in it's first line. This function WILL PANIC if for some reason it is unable to read the file.
+// 
+//- filePath => string (In the same format as would be passed to os.ReadFile, `go doc os.ReadFile` for more information)
+// 
+//- separator => string (The separator for the CSV file)
+// 
+// returns []map[string]string (A list of the file's lines mapped by the names of their columns)
 // 
 func ReadCSV(filePath string, separator string) []map[string]string {
 	file, err := os.ReadFile(filePath)
