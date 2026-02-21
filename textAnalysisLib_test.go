@@ -149,3 +149,15 @@ func TestCalculateTextProbabilityForBOWs(t *testing.T) {
 	}
 
 }
+
+func TestReadCSV(t *testing.T) {
+	result := ReadCSV("./data/csv/test.csv", ",")
+
+	line := result[0]
+
+	name := line["name"]
+
+	if name != "joão" {
+		t.Error("ReadCSV, unexpected result", name)
+	}
+}

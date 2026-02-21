@@ -169,6 +169,7 @@ func CalculateTextBowProbability(text string, bow map[string]int, language strin
 
 
 // Calculate probability for diferent BOWs
+// 
 func CalculateTextProbabilityForBOWs(text string, bows []map[string]int, language string) []float64 {
 	probabilities := []float64{} 
 	for _, bow := range bows {
@@ -176,4 +177,43 @@ func CalculateTextProbabilityForBOWs(text string, bows []map[string]int, languag
 		probabilities =	append(probabilities, probability)
 	}
 	return probabilities
+}
+
+// Reads and returns the contents of a CSV file, it must contain headers.
+// 
+func ReadCSV(filePath string, separator string) []map[string]string {
+	file, err := os.ReadFile(filePath)
+
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+
+	textFile := string(file)
+
+	lines := strings.Split(textFile, "\n")
+
+	headers := []string{}
+
+	items := []map[string]string{}
+
+	for index, line := range lines {
+		if index == 0 {
+			headersLine := strings.ReplaceAll(line, " ", "")
+			headers = strings.Split(headersLine, separator)
+			continue
+		}
+		
+		columns := strings.Split(line, separator)
+
+		item := map[string]string{}
+
+		for i, column := range columns {
+			item[headers[i]] = strings.Trim(column, " ")
+		}
+				
+		items = append(items, item)
+	}
+
+	return items
 }
